@@ -49,73 +49,61 @@ function updateCamera() {
   if (video.readyState >= 2) drawLive();
 }
 
-// 칠판과 분필 장식으로 완성 사진 프레임을 그립니다.
-function cherry(x, y, scale = 1) {
-  ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
-  ctx.strokeStyle = '#a7ce74'; ctx.lineWidth = 4; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(0, -23); ctx.quadraticCurveTo(-9, -7, -19, 7);
-  ctx.moveTo(0, -23); ctx.quadraticCurveTo(12, -6, 19, 7); ctx.stroke();
-  ctx.fillStyle = '#a9d575'; ctx.beginPath(); ctx.ellipse(10, -27, 14, 6, -.3, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#ef686d';
-  for (const cx of [-20, 20]) {
-    ctx.beginPath(); ctx.arc(cx, 15, 13, 0, Math.PI * 2); ctx.fill();
+// 아이보리 종이와 크레파스 글자, 색종이 장식으로 사진 프레임을 그립니다.
+const crayonColors = ['#f97d67', '#f6ba4c', '#4daf98', '#526ed3'];
+function confetti() {
+  const colors = ['#f97d67','#f7c156','#62c5ac','#6d80e8','#ed9fb6'];
+  for (let i = 0; i < 90; i++) {
+    const x = (i * 127 + 29) % 680 + 20;
+    const y = i < 48 ? (i * 43) % 105 + 20 : (i * 37) % 95 + 960;
+    ctx.save(); ctx.translate(x, y); ctx.rotate((i % 9) * .37);
+    ctx.fillStyle = colors[i % colors.length]; ctx.fillRect(-2, -6, 4, 12); ctx.restore();
   }
-  ctx.restore();
 }
-function chalkFlower(x, y, color) {
-  ctx.save(); ctx.translate(x, y); ctx.strokeStyle = color; ctx.lineWidth = 4;
-  for (let i = 0; i < 5; i++) {
-    ctx.save(); ctx.rotate(i * 2 * Math.PI / 5);
-    ctx.beginPath(); ctx.ellipse(0, -13, 7, 12, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
-  }
-  ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
-}
-function chalkChild(x, y, color) {
-  ctx.save(); ctx.translate(x, y); ctx.strokeStyle = '#dde9d1';
+function doodleChild(x, y, shirt) {
+  ctx.save(); ctx.translate(x, y); ctx.strokeStyle = '#656461';
   ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.beginPath(); ctx.arc(0, -17, 17, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(-12, -34); ctx.lineTo(-7, -42);
-  ctx.moveTo(1, -36); ctx.lineTo(4, -44); ctx.moveTo(10, -32); ctx.lineTo(17, -38);
-  ctx.moveTo(-18, 19); ctx.lineTo(-31, 30); ctx.moveTo(18, 19); ctx.lineTo(31, 30);
-  ctx.moveTo(-7, 50); ctx.lineTo(-12, 64); ctx.moveTo(7, 50); ctx.lineTo(12, 64); ctx.stroke();
-  ctx.fillStyle = '#eef0da';
-  for (const eye of [-7, 7]) { ctx.beginPath(); ctx.arc(eye, -19, 1.8, 0, Math.PI * 2); ctx.fill(); }
-  ctx.beginPath(); ctx.arc(0, -13, 7, .15, Math.PI - .15); ctx.stroke();
-  ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(-15, 6); ctx.lineTo(15, 6);
-  ctx.lineTo(20, 48); ctx.lineTo(-20, 48); ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = '#f9edd8'; ctx.beginPath(); ctx.moveTo(-8, 15); ctx.lineTo(3, 37); ctx.lineTo(10, 17); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, -16, 20, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-19, -23); ctx.lineTo(-12, -37); ctx.lineTo(-4, -29);
+  ctx.lineTo(5, -38); ctx.lineTo(13, -29); ctx.lineTo(21, -35);
+  ctx.moveTo(-17, 15); ctx.lineTo(-30, 25); ctx.moveTo(17, 15); ctx.lineTo(30, 25);
+  ctx.moveTo(-7, 49); ctx.lineTo(-10, 64); ctx.moveTo(7, 49); ctx.lineTo(10, 64); ctx.stroke();
+  ctx.fillStyle = '#656461';
+  for (const eye of [-7,7]) { ctx.beginPath(); ctx.arc(eye,-17,2,0,Math.PI*2); ctx.fill(); }
+  ctx.beginPath(); ctx.arc(0,-10,8,.15,Math.PI-.15); ctx.stroke();
+  ctx.fillStyle = shirt; ctx.beginPath(); ctx.moveTo(-16,5); ctx.lineTo(16,5);
+  ctx.lineTo(20,47); ctx.lineTo(-20,47); ctx.closePath(); ctx.fill();
   ctx.restore();
 }
 function drawPhoto(i, x, y) {
   const width = 290, height = 335;
-  ctx.fillStyle = '#f8f5e8'; ctx.fillRect(x - 7, y - 7, width + 14, height + 14);
+  ctx.fillStyle = crayonColors[i]; ctx.fillRect(x - 8, y - 8, width + 16, height + 16);
   ctx.save(); ctx.beginPath(); ctx.rect(x, y, width, height); ctx.clip();
-  ctx.fillStyle = '#fcfaf2'; ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = '#fff'; ctx.fillRect(x, y, width, height);
   if (photos[i]) drawCover(photos[i], x, y, width, height);
   ctx.restore();
 }
 function render() {
   const w = canvas.width, h = canvas.height;
-  ctx.fillStyle = '#2d543f'; ctx.fillRect(0, 0, w, h);
-  // 일정한 분필 알갱이 무늬: 매번 그려도 사진 결과가 달라지지 않습니다.
-  ctx.fillStyle = '#f6f4d50a';
-  for (let y = 8; y < h; y += 13) for (let x = 11; x < w; x += 17) {
-    ctx.fillRect(x + ((y * 7) % 8), y, 2, 2);
+  ctx.fillStyle = '#fffcf3'; ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#c8bba913';
+  for (let y = 7; y < h; y += 11) for (let x = 9; x < w; x += 13) {
+    ctx.fillRect(x + (y % 5), y, 1.5, 1.5);
   }
-  ctx.strokeStyle = '#c0d1be99'; ctx.lineWidth = 5; ctx.lineCap = 'round';
-  ctx.strokeRect(22, 23, w - 44, h - 46);
-  cherry(w / 2, 68, .82);
-  ctx.textAlign = 'center'; ctx.fillStyle = '#ffe9ad';
-  ctx.font = '900 64px system-ui, sans-serif'; ctx.fillText('해솔 네컷', w / 2, 173);
-  ctx.strokeStyle = '#e4bbcf'; ctx.lineWidth = 5;
-  ctx.beginPath(); ctx.moveTo(245, 190); ctx.quadraticCurveTo(360, 209, 475, 190); ctx.stroke();
+  confetti();
+  ctx.textAlign = 'center'; ctx.font = '900 74px system-ui, sans-serif';
+  const syllables = ['해','솔','네','컷'];
+  for (let i = 0; i < syllables.length; i++) {
+    ctx.save(); ctx.translate(220 + 95 * i, 174 + (i % 2 ? 5 : -3));
+    ctx.rotate((i % 2 ? 1 : -1) * .045);
+    ctx.fillStyle = crayonColors[i]; ctx.fillText(syllables[i], 0, 0); ctx.restore();
+  }
   drawPhoto(0, 55, 230); drawPhoto(1, 375, 230);
   drawPhoto(2, 55, 595); drawPhoto(3, 375, 595);
-  chalkFlower(38, 577, '#edb7c8'); chalkFlower(684, 573, '#e9d998');
-  chalkChild(290, 987, '#a2c777'); chalkChild(430, 987, '#e6aabf');
-  chalkFlower(88, 997, '#ebaabc'); chalkFlower(631, 995, '#a8c97b');
-  ctx.fillStyle = '#e4e9d3'; ctx.font = '22px system-ui, sans-serif';
-  ctx.fillText(new Date().toLocaleDateString('ko-KR'), w / 2, 1053);
+  doodleChild(265, 982, '#a7d7ec'); doodleChild(360, 982, '#f5b8c6');
+  doodleChild(455, 982, '#b8d89a');
+  ctx.fillStyle = '#62615b'; ctx.font = '22px system-ui, sans-serif';
+  ctx.fillText(new Date().toLocaleDateString('ko-KR'), w / 2, 1056);
   progress.textContent = `${photos.length} / 4 촬영`;
 }
 
