@@ -33,3 +33,5 @@
 - 사진과 메일 주소는 Google을 통해 전송됩니다. 공용 태블릿에서는 다음 팀 전에 다시 찍기를 누르고, 사진과 연락처 처리에 관한 행사 안내 및 동의 절차를 확인하세요. 메일 발송은 계정별 일일 수신자 할당량 및 첨부 크기 제한을 따릅니다.
 
 참고: [Apps Script 웹 앱 배포와 `doPost`](https://developers.google.com/apps-script/guides/web), [MailApp 첨부파일 및 발송](https://developers.google.com/apps-script/reference/mail/mail-app), [서비스 할당량](https://developers.google.com/apps-script/guides/services/quotas).
+
+화면의 「해솔 네컷」 제목과 완성 JPG의 제목에만 Google Fonts의 Gaegu 어린이 손글씨체를 사용합니다. 글꼴을 불러오지 못하면 기기의 기본 글꼴로 표시됩니다.

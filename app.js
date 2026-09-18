@@ -91,7 +91,7 @@ function render() {
     ctx.fillRect(x + (y % 5), y, 1.5, 1.5);
   }
   confetti();
-  ctx.textAlign = 'center'; ctx.font = '900 74px system-ui, sans-serif';
+  ctx.textAlign = 'center'; ctx.font = '700 86px Gaegu, system-ui, sans-serif';
   const syllables = ['해','솔','네','컷'];
   for (let i = 0; i < syllables.length; i++) {
     ctx.save(); ctx.translate(220 + 95 * i, 174 + (i % 2 ? 5 : -3));
@@ -110,7 +110,7 @@ function render() {
 function reset() {
   photos = []; ready = false; busy = false; email.value = '';
   shoot.disabled = !stream; retry.disabled = true; send.disabled = true; download.disabled = true;
-  render(); message('준비됐어요. 네 장 촬영을 눌러 주세요.');
+  render(); message('준비됐어요. 촬영을 눌러 주세요.');
 }
 start.addEventListener('click', async () => {
   try {
@@ -120,7 +120,7 @@ start.addEventListener('click', async () => {
     await video.play(); start.disabled = true; shoot.disabled = false;
     cameraLoop = requestAnimationFrame(updateCamera);
     document.querySelector('#cameraHint').textContent = '화면에는 거울처럼 보이고 사진도 같은 방향으로 저장돼요.';
-    message('준비됐어요. 네 장 촬영을 눌러 주세요.');
+    message('준비됐어요. 촬영을 눌러 주세요.');
   } catch { message('카메라를 열 수 없어요. 브라우저 권한과 HTTPS 연결을 확인해 주세요.'); }
 });
 shoot.addEventListener('click', async () => {
@@ -167,3 +167,6 @@ form.addEventListener('submit', event => {
 });
 window.addEventListener('pagehide', () => { cancelAnimationFrame(cameraLoop); stream?.getTracks().forEach(track => track.stop()); });
 render();
+
+// 웹 폰트가 도착하면 저장되는 사진의 글자도 같은 글씨체로 다시 그립니다.
+document.fonts?.ready.then(render);
