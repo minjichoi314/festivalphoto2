@@ -49,66 +49,73 @@ function updateCamera() {
   if (video.readyState >= 2) drawLive();
 }
 
-// 첨부된 연두색 2×2 네컷 프레임을 캔버스 도형으로 재현합니다.
-function clover(x, y, size, color = '#85d448') {
-  ctx.save(); ctx.translate(x, y); ctx.fillStyle = color;
-  for (let i = 0; i < 4; i++) {
-    const angle = i * Math.PI / 2;
-    ctx.beginPath();
-    ctx.ellipse(Math.cos(angle) * size * .42, Math.sin(angle) * size * .42,
-      size * .42, size * .34, angle, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.beginPath(); ctx.arc(0, 0, size * .18, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-}
-function sparkle(x, y, size, color = '#80cf43') {
-  ctx.save(); ctx.translate(x, y); ctx.rotate(Math.PI / 4);
-  ctx.fillStyle = color; ctx.fillRect(-size / 2, -size / 2, size, size);
-  ctx.restore();
-}
-function character(x, y, scale) {
+// 칠판과 분필 장식으로 완성 사진 프레임을 그립니다.
+function cherry(x, y, scale = 1) {
   ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
-  ctx.fillStyle = '#a9e95a';
-  // 네잎클로버처럼 둥근 머리와 작은 몸
-  for (const [cx, cy] of [[-28,-23],[28,-23],[-28,18],[28,18]]) {
-    ctx.beginPath(); ctx.arc(cx, cy, 33, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#a7ce74'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, -23); ctx.quadraticCurveTo(-9, -7, -19, 7);
+  ctx.moveTo(0, -23); ctx.quadraticCurveTo(12, -6, 19, 7); ctx.stroke();
+  ctx.fillStyle = '#a9d575'; ctx.beginPath(); ctx.ellipse(10, -27, 14, 6, -.3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#ef686d';
+  for (const cx of [-20, 20]) {
+    ctx.beginPath(); ctx.arc(cx, 15, 13, 0, Math.PI * 2); ctx.fill();
   }
-  ctx.beginPath(); ctx.ellipse(0, 45, 38, 23, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#85cf3c'; ctx.lineWidth = 4; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(-32, -29); ctx.lineTo(-41, -38);
-  ctx.moveTo(32, -29); ctx.lineTo(41, -38); ctx.stroke();
-  ctx.fillStyle = '#346322';
-  for (const ex of [-10, 10]) {
-    ctx.beginPath(); ctx.arc(ex, -1, 2.8, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function chalkFlower(x, y, color) {
+  ctx.save(); ctx.translate(x, y); ctx.strokeStyle = color; ctx.lineWidth = 4;
+  for (let i = 0; i < 5; i++) {
+    ctx.save(); ctx.rotate(i * 2 * Math.PI / 5);
+    ctx.beginPath(); ctx.ellipse(0, -13, 7, 12, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
   }
-  ctx.strokeStyle = '#346322'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(0, 3, 7, .15, Math.PI - .15); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+}
+function chalkChild(x, y, color) {
+  ctx.save(); ctx.translate(x, y); ctx.strokeStyle = '#dde9d1';
+  ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.arc(0, -17, 17, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-12, -34); ctx.lineTo(-7, -42);
+  ctx.moveTo(1, -36); ctx.lineTo(4, -44); ctx.moveTo(10, -32); ctx.lineTo(17, -38);
+  ctx.moveTo(-18, 19); ctx.lineTo(-31, 30); ctx.moveTo(18, 19); ctx.lineTo(31, 30);
+  ctx.moveTo(-7, 50); ctx.lineTo(-12, 64); ctx.moveTo(7, 50); ctx.lineTo(12, 64); ctx.stroke();
+  ctx.fillStyle = '#eef0da';
+  for (const eye of [-7, 7]) { ctx.beginPath(); ctx.arc(eye, -19, 1.8, 0, Math.PI * 2); ctx.fill(); }
+  ctx.beginPath(); ctx.arc(0, -13, 7, .15, Math.PI - .15); ctx.stroke();
+  ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(-15, 6); ctx.lineTo(15, 6);
+  ctx.lineTo(20, 48); ctx.lineTo(-20, 48); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#f9edd8'; ctx.beginPath(); ctx.moveTo(-8, 15); ctx.lineTo(3, 37); ctx.lineTo(10, 17); ctx.stroke();
   ctx.restore();
 }
 function drawPhoto(i, x, y) {
-  const width = 304, height = 368;
+  const width = 290, height = 335;
+  ctx.fillStyle = '#f8f5e8'; ctx.fillRect(x - 7, y - 7, width + 14, height + 14);
   ctx.save(); ctx.beginPath(); ctx.rect(x, y, width, height); ctx.clip();
-  ctx.fillStyle = '#fff'; ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = '#fcfaf2'; ctx.fillRect(x, y, width, height);
   if (photos[i]) drawCover(photos[i], x, y, width, height);
   ctx.restore();
 }
 function render() {
   const w = canvas.width, h = canvas.height;
-  ctx.fillStyle = '#c4f47b'; ctx.fillRect(0, 0, w, h);
-  // 사진 네 장은 참고 이미지의 흰 사각형과 같은 2×2 구성입니다.
-  drawPhoto(0, 40, 135); drawPhoto(1, 376, 135);
-  drawPhoto(2, 40, 535); drawPhoto(3, 376, 535);
-  clover(306, 66, 17, '#a5e761');
-  clover(360, 66, 17, '#95dc50');
-  clover(414, 66, 17, '#a5e761');
-  clover(39, 185, 16); sparkle(40, 222, 14);
-  sparkle(681, 400, 16); clover(39, 637, 15);
-  sparkle(681, 880, 13); clover(681, 911, 16);
-  character(164, 1027, 1.04);
-  character(360, 1027, 1.04);
-  character(555, 1027, 1.04);
-  clover(42, 1033, 22); clover(680, 1033, 22);
+  ctx.fillStyle = '#2d543f'; ctx.fillRect(0, 0, w, h);
+  // 일정한 분필 알갱이 무늬: 매번 그려도 사진 결과가 달라지지 않습니다.
+  ctx.fillStyle = '#f6f4d50a';
+  for (let y = 8; y < h; y += 13) for (let x = 11; x < w; x += 17) {
+    ctx.fillRect(x + ((y * 7) % 8), y, 2, 2);
+  }
+  ctx.strokeStyle = '#c0d1be99'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+  ctx.strokeRect(22, 23, w - 44, h - 46);
+  cherry(w / 2, 68, .82);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#ffe9ad';
+  ctx.font = '900 64px system-ui, sans-serif'; ctx.fillText('해솔 네컷', w / 2, 173);
+  ctx.strokeStyle = '#e4bbcf'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(245, 190); ctx.quadraticCurveTo(360, 209, 475, 190); ctx.stroke();
+  drawPhoto(0, 55, 230); drawPhoto(1, 375, 230);
+  drawPhoto(2, 55, 595); drawPhoto(3, 375, 595);
+  chalkFlower(38, 577, '#edb7c8'); chalkFlower(684, 573, '#e9d998');
+  chalkChild(290, 987, '#a2c777'); chalkChild(430, 987, '#e6aabf');
+  chalkFlower(88, 997, '#ebaabc'); chalkFlower(631, 995, '#a8c97b');
+  ctx.fillStyle = '#e4e9d3'; ctx.font = '22px system-ui, sans-serif';
+  ctx.fillText(new Date().toLocaleDateString('ko-KR'), w / 2, 1053);
   progress.textContent = `${photos.length} / 4 촬영`;
 }
 
